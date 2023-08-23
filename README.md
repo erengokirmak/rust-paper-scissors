@@ -15,7 +15,7 @@ The game allows for new hands to be added without much effort. This was done wit
 
 ## Insufficiencies
 
-One problem of this code is that a hand can win against one and only one other piece. This means that when you add additional hands to the game, the game becomes immidiately unfair. The newly added hand isn't beaten by any other hand, making it the optimal choice for the player from that point.
+One problem of this code is that a hand can win against one and only one other piece. This means that when you add additional hands to the game, the game becomes immediately unfair. The newly added hand isn't beaten by any other hand, making it the optimal choice for the player from that point.
 
 For example:
 
