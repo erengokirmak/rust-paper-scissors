@@ -2,6 +2,8 @@ use core::fmt;
 use rand::{thread_rng, Rng};
 use std::io::{self, stdin, Write};
 
+/// The choices the computer or the user can make
+/// while playing rock paper scissors
 enum States {
     Rock,
     Paper,
@@ -21,23 +23,26 @@ impl fmt::Display for States {
 fn main() -> Result<(), String> {
     let mut random = thread_rng();
 
+    // wins, draws, losses
+    let mut scores: (u8, u8, u8) = (0, 0, 0);
+
     loop {
         let comp_choice: States;
         let user_choice: States;
 
-        // Generating  computer choice
-        match random.gen_range(0..3) {
-            0 => comp_choice = States::Rock,
-            1 => comp_choice = States::Paper,
-            2 => comp_choice = States::Scissors,
+        // Generate computer choice
+        match random.gen_range(0u8..3u8) {
+            0u8 => comp_choice = States::Rock,
+            1u8 => comp_choice = States::Paper,
+            2u8 => comp_choice = States::Scissors,
             _ => {
                 eprintln!("There was a serious error with the computer choice!");
                 break;
             }
         }
 
-        // Receiving user choice
-        print!("Enter your choice (rock, paper, or scissors) or 'q' to quit: ");
+        // Receive user choice
+        print!("\nEnter your choice (rock, paper, or scissors) or 'q' to quit: ");
         let mut user_input = String::new();
         match io::stdout().flush() {
             Ok(_) => (),
@@ -50,7 +55,7 @@ fn main() -> Result<(), String> {
                 "scissors" => user_choice = States::Scissors,
                 "q" => break,
                 _ => {
-                    println!("You made an invalid choice, try again");
+                    println!("You made an invalid choice, try again\n");
                     continue;
                 }
             },
@@ -60,7 +65,7 @@ fn main() -> Result<(), String> {
             }
         }
 
-        // \n is for making a space between the input message and this message
+        // Announce choices
         println!(
             "\nComputer chose {}, you chose {}.",
             &comp_choice, &user_choice
@@ -69,20 +74,35 @@ fn main() -> Result<(), String> {
         // Game logic
         match (comp_choice, user_choice) {
             // Draw cases
-            (States::Paper, States::Paper) => println!("Draw!"),
-            (States::Rock, States::Rock) => println!("Draw!"),
-            (States::Scissors, States::Scissors) => println!("Draw!"),
+            (States::Paper, States::Paper)
+            | (States::Rock, States::Rock)
+            | (States::Scissors, States::Scissors) => {
+                println!("Draw!");
+                scores.1 += 1;
+            }
 
             // Wins for player
-            (States::Paper, States::Scissors) => println!("You Win!"),
-            (States::Scissors, States::Rock) => println!("You Win!"),
-            (States::Rock, States::Paper) => println!("You Win!"),
+            (States::Paper, States::Scissors)
+            | (States::Rock, States::Paper)
+            | (States::Scissors, States::Rock) => {
+                println!("You Win!");
+                scores.0 += 1;
+            }
 
             // Wins for computer
-            (States::Paper, States::Rock) => println!("Computer Wins!"),
-            (States::Scissors, States::Paper) => println!("Computer Wins!"),
-            (States::Rock, States::Scissors) => println!("Computer Wins!"),
+            (States::Paper, States::Rock)
+            | (States::Scissors, States::Paper)
+            | (States::Rock, States::Scissors) => {
+                println!("Computer Wins!");
+                scores.2 += 1;
+            }
         }
+
+        // Print scores
+        println!(
+            "Wins: {}, Draws: {}, Losses: {}.",
+            scores.0, scores.1, scores.2
+        );
     }
     Ok(())
 }
