@@ -1,10 +1,8 @@
 mod hands;
 
-use hands::{play_hand, Hand, HandResult};
+use hands::{play_hand, random_hand, Hand, HandResult};
 
 use std::io::{self, stdin, Write};
-
-use crate::hands::random_hand;
 
 fn main() -> Result<(), String> {
     // wins, draws, losses

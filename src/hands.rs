@@ -7,7 +7,7 @@ pub trait Beats {
     fn beats(&self) -> Self;
 }
 
-#[derive(PartialEq, Eq, FromRepr, EnumCount)]
+#[derive(PartialEq, FromRepr, EnumCount)]
 pub enum Hand {
     Rock,
     Paper,
@@ -32,7 +32,7 @@ impl fmt::Display for Hand {
 
 impl Beats for Hand {
     fn beats(&self) -> Self {
-        match *self {
+        match self {
             Hand::Rock => Hand::Scissors,
             Hand::Paper => Hand::Rock,
             Hand::Scissors => Hand::Paper,
@@ -41,11 +41,9 @@ impl Beats for Hand {
 }
 
 pub fn play_hand(own_hand: Hand, other_hand: Hand) -> HandResult {
-    let (own_beats, other_beats) = (own_hand.beats(), other_hand.beats());
-
-    if own_beats == other_hand {
+    if own_hand.beats() == other_hand {
         HandResult::Win
-    } else if other_beats == own_hand {
+    } else if other_hand.beats() == own_hand {
         HandResult::Lose
     } else {
         HandResult::Draw
