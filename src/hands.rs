@@ -1,16 +1,19 @@
 use rand::{thread_rng, Rng};
-use std::fmt;
+use std::{fmt, str::FromStr};
 use strum::EnumCount;
-use strum_macros::{EnumCount, FromRepr};
+use strum_macros::{EnumCount, EnumIter, EnumString, FromRepr};
 
 pub trait Beats {
     fn beats(&self) -> Self;
 }
 
-#[derive(PartialEq, FromRepr, EnumCount)]
+#[derive(Debug, PartialEq, FromRepr, EnumCount, EnumIter, EnumString)]
 pub enum Hand {
+    #[strum(serialize = "rock")]
     Rock,
+    #[strum(serialize = "paper")]
     Paper,
+    #[strum(serialize = "scissors")]
     Scissors,
 }
 
@@ -47,6 +50,13 @@ pub fn play_hand(own_hand: Hand, other_hand: Hand) -> HandResult {
         HandResult::Lose
     } else {
         HandResult::Draw
+    }
+}
+
+pub fn user_input_to_hand(input: String) -> Option<Hand> {
+    match Hand::from_str(&input) {
+        Ok(hand) => Some(hand),
+        Err(_) => None,
     }
 }
 

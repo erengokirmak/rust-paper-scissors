@@ -4,7 +4,9 @@ use hands::{play_hand, random_hand, Hand, HandResult};
 
 use std::io::{self, stdin, Write};
 
-fn main() -> Result<(), String> {
+use crate::hands::user_input_to_hand;
+
+fn main() {
     // wins, draws, losses
     let mut scores: (u8, u8, u8) = (0, 0, 0);
 
@@ -15,21 +17,22 @@ fn main() -> Result<(), String> {
         // Receive user choice
         print!("\nEnter your choice (rock, paper, or scissors) or 'q' to quit: ");
         let mut user_input = String::new();
-        match io::stdout().flush() {
-            Ok(_) => (),
-            Err(e) => eprintln!("Something went horribly wrong! Error: {}", e),
-        }
+        io::stdout()
+            .flush()
+            .expect("Buffer should be flushed to stdout");
         let user_choice: Hand = match stdin().read_line(&mut user_input) {
-            Ok(_) => match user_input.trim().to_lowercase().as_str() {
-                "rock" => Hand::Rock,
-                "paper" => Hand::Paper,
-                "scissors" => Hand::Scissors,
-                "q" => break,
-                _ => {
-                    println!("You made an invalid choice, try again\n");
-                    continue;
+            Ok(_) => {
+                if user_input.trim().to_lowercase().as_str() == "q" {
+                    break;
                 }
-            },
+                match user_input_to_hand(user_input.trim().to_lowercase()) {
+                    Some(hand) => hand,
+                    None => {
+                        println!("Invalid input, try again.");
+                        continue;
+                    }
+                }
+            }
             Err(e) => {
                 println!("There was an error: {}", e);
                 continue;
@@ -64,5 +67,4 @@ fn main() -> Result<(), String> {
             scores.0, scores.1, scores.2
         );
     }
-    Ok(())
 }
