@@ -9,11 +9,11 @@ pub trait Beats {
 
 #[derive(Debug, PartialEq, FromRepr, EnumCount, EnumIter, EnumString)]
 pub enum Hand {
-    #[strum(serialize = "rock")]
+    #[strum(serialize = "rock", serialize = "r")]
     Rock,
-    #[strum(serialize = "paper")]
+    #[strum(serialize = "paper", serialize = "p")]
     Paper,
-    #[strum(serialize = "scissors")]
+    #[strum(serialize = "scissors", serialize = "s")]
     Scissors,
 }
 
