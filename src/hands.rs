@@ -1,13 +1,10 @@
 use rand::{thread_rng, Rng};
 use std::{fmt, str::FromStr};
 use strum::EnumCount;
-use strum_macros::{EnumCount, EnumIter, EnumString, FromRepr};
+use strum_macros::{EnumCount, EnumString, FromRepr};
 
-pub trait Beats {
-    fn beats(&self) -> Self;
-}
-
-#[derive(Debug, PartialEq, FromRepr, EnumCount, EnumIter, EnumString)]
+/// Possible hands in a rock-paper-scissors game
+#[derive(PartialEq, FromRepr, EnumCount, EnumString)]
 pub enum Hand {
     #[strum(serialize = "rock", serialize = "r")]
     Rock,
@@ -17,6 +14,7 @@ pub enum Hand {
     Scissors,
 }
 
+/// Possible conditions after a round
 pub enum HandResult {
     Win,
     Draw,
@@ -33,7 +31,7 @@ impl fmt::Display for Hand {
     }
 }
 
-impl Beats for Hand {
+impl Hand {
     fn beats(&self) -> Self {
         match self {
             Hand::Rock => Hand::Scissors,
@@ -43,7 +41,8 @@ impl Beats for Hand {
     }
 }
 
-pub fn play_hand(own_hand: Hand, other_hand: Hand) -> HandResult {
+/// Determines the result of a round
+pub fn determine_round_result(own_hand: Hand, other_hand: Hand) -> HandResult {
     if own_hand.beats() == other_hand {
         HandResult::Win
     } else if other_hand.beats() == own_hand {
@@ -53,7 +52,9 @@ pub fn play_hand(own_hand: Hand, other_hand: Hand) -> HandResult {
     }
 }
 
-pub fn user_input_to_hand(input: String) -> Option<Hand> {
+/// Taken in the user input and, if possible,
+/// returns a valid Hand
+pub fn string_to_hand(input: String) -> Option<Hand> {
     match Hand::from_str(&input) {
         Ok(hand) => Some(hand),
         Err(_) => None,

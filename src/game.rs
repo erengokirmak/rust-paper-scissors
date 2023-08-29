@@ -1,13 +1,13 @@
 use crate::hands::Hand;
 use crate::hands::HandResult;
-use crate::hands::{play_hand, random_hand, user_input_to_hand};
+use crate::hands::{determine_round_result, random_hand, string_to_hand};
 use std::io::Write;
 use std::io::{self, stdin};
 
 /// A model for a rock-paper-scissors game
 ///
-/// Contains the scoreboard of the game. The actual
-/// game procedure occurs from the ```play_game()``` function
+/// Contains the scoreboard of the game.
+/// To create a new game, use the Game::new() function
 pub struct Game {
     win_count: u32,
     draw_count: u32,
@@ -26,7 +26,7 @@ impl Game {
 
     /// Creates the game loop, regulates user input
     /// and game logic. At the end of every round,
-    /// prints the current scoreboard to the terminal.
+    /// prints the current scoreboard to the output.
     pub fn play_game(&mut self) {
         loop {
             // Generate computer choice
@@ -43,7 +43,7 @@ impl Game {
                     if user_input.trim().to_lowercase().as_str() == "q" {
                         break;
                     }
-                    match user_input_to_hand(user_input.trim().to_lowercase()) {
+                    match string_to_hand(user_input.trim().to_lowercase()) {
                         Some(hand) => hand,
                         None => {
                             println!("Invalid input, try again.");
@@ -63,8 +63,8 @@ impl Game {
                 &comp_choice, &user_choice
             );
 
-            // Game logic
-            match play_hand(user_choice, comp_choice) {
+            // Scoreboard logic
+            match determine_round_result(user_choice, comp_choice) {
                 HandResult::Win => {
                     println!("You Win!");
                     self.win_count += 1;
