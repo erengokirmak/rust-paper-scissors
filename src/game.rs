@@ -1,5 +1,5 @@
 use crate::hands::Hand;
-use crate::hands::HandResult;
+use crate::hands::RoundResult;
 use crate::hands::{determine_round_result, random_hand, string_to_hand};
 use std::io::Write;
 use std::io::{self, stdin};
@@ -7,7 +7,7 @@ use std::io::{self, stdin};
 /// A model for a rock-paper-scissors game
 ///
 /// Contains the scoreboard of the game.
-/// To create a new game, use the Game::new() function
+/// To create a new game, use the Game::new() function.
 pub struct Game {
     win_count: u32,
     draw_count: u32,
@@ -38,24 +38,24 @@ impl Game {
                 .flush()
                 .expect("Buffer should be flushed to stdout");
             let mut user_input = String::new();
-            let user_choice: Hand = match stdin().read_line(&mut user_input) {
-                Ok(_) => {
-                    if user_input.trim().to_lowercase().as_str() == "q" {
-                        break;
+
+            // If reading input goes wrong, there are bigger
+            // problems than playing rock, paper, scissors.
+            let _ = stdin().read_line(&mut user_input);
+
+            let user_choice: Hand = match user_input.trim().to_lowercase().as_str() {
+                "q" => break,
+                other => match string_to_hand(other) {
+                    Some(hand) => hand,
+                    None => {
+                        println!("Invalid input, try again.");
+                        continue;
                     }
-                    match string_to_hand(user_input.trim().to_lowercase()) {
-                        Some(hand) => hand,
-                        None => {
-                            println!("Invalid input, try again.");
-                            continue;
-                        }
-                    }
-                }
-                Err(e) => {
-                    println!("There was an error: {}", e);
-                    continue;
-                }
+                },
             };
+
+            // Clear the terminal
+            print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
 
             // Announce choices
             println!(
@@ -65,15 +65,15 @@ impl Game {
 
             // Scoreboard logic
             match determine_round_result(user_choice, comp_choice) {
-                HandResult::Win => {
+                RoundResult::Win => {
                     println!("You Win!");
                     self.win_count += 1;
                 }
-                HandResult::Draw => {
+                RoundResult::Draw => {
                     println!("Draw!");
                     self.draw_count += 1;
                 }
-                HandResult::Lose => {
+                RoundResult::Lose => {
                     println!("Computer Wins!");
                     self.loss_count += 1;
                 }
@@ -83,7 +83,7 @@ impl Game {
                 "\n\t   Wins | Draws | Losses
             {:3} | {:5} | {:6}",
                 &self.win_count, &self.draw_count, &self.loss_count
-            )
+            );
         }
     }
 }

@@ -1,5 +1,5 @@
 mod game;
-mod hands;
+pub mod hands;
 
 use game::Game;
 
